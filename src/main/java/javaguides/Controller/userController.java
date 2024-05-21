@@ -1,13 +1,17 @@
 package javaguides.Controller;
 
 import javaguides.Entity.users;
+import javaguides.Exception.ErrorDetails;
+import javaguides.Exception.ResourceNotFoundException;
 import javaguides.Services.userServiceImpl;
 import javaguides.UserDto.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -47,4 +51,16 @@ public class userController {
         service.deleteUser((long) id);
         return new ResponseEntity<>("user deleted Sucessfully", HttpStatus.OK);
     }
+//    @ExceptionHandler(ResourceNotFoundException.class)
+//    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest req) {
+//    ErrorDetails details = new ErrorDetails(
+//            LocalDateTime.now(),
+//            ex.getMessage(),
+//            req.getDescription(false),
+//            "User Not Found"
+//    );
+//    return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
+//
+//
+//    }
 }

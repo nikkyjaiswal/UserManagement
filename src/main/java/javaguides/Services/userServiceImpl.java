@@ -1,13 +1,14 @@
 package javaguides.Services;
 
 import javaguides.Entity.users;
+import javaguides.Exception.EmailsAlredyExists;
+import javaguides.Exception.ResourceNotFoundException;
 import javaguides.Mapper.AutoUserMapper;
-import javaguides.Mapper.UserMapper;
 import javaguides.Repository.userRepository;
 import javaguides.UserDto.UserDto;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,10 @@ public class userServiceImpl {
         // UserDto to user JPA entity
         //users user= UserMapper.mapTousers(userDto);
         // users user = modelmapper.map(userDto, users.class);
+        Optional<users> userEmail= userRepository.findByEmail(userDto.getEmail());
+        if(userEmail.isPresent()){
+            throw new EmailsAlredyExists("Email  already exist for this user");
+        }
         users user = AutoUserMapper.Mapper.mapTousers(userDto);
         users savedUser = userRepository.save(user);
         // users JPA entity to UserDto
@@ -36,11 +41,13 @@ public class userServiceImpl {
     }
 
     public UserDto getUserById(Long id) {
-        Optional<users> user = userRepository.findById(id);
-        users users = user.orElse(null);
+        users user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id)
+        );
+       // users users = user.orElse(null);
         //return UserMapper.mapToUserdto(users);
         //return modelmapper.map(users, UserDto.class);
-        return AutoUserMapper.Mapper.mapToUserDto(users);
+        return AutoUserMapper.Mapper.mapToUserDto(user);
 
     }
 
@@ -53,7 +60,9 @@ public class userServiceImpl {
 
 
     public UserDto updateUser(UserDto user) {
-        users existingUser = userRepository.findById(user.getId()).get();
+        users existingUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", user.getId())
+        );
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
         existingUser.setEmail(user.getEmail());
@@ -63,6 +72,9 @@ public class userServiceImpl {
     }
 
     public void deleteUser(Long id) {
+        users existingUser = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id)
+        );
         userRepository.deleteById(id);
 
     }
