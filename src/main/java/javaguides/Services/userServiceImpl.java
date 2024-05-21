@@ -1,13 +1,16 @@
 package javaguides.Services;
 
 import javaguides.Entity.users;
+import javaguides.Mapper.UserMapper;
 import javaguides.Repository.userRepository;
+import javaguides.UserDto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -15,29 +18,36 @@ public class userServiceImpl {
     private userRepository userRepository;
 
 
-    public users createUser(users user) {
-        return userRepository.save(user);
+    public UserDto createUser(UserDto userDto) {
+       // UserDto to user JPA entity
+            users user= UserMapper.mapTousers(userDto);
+
+        users savedUser = userRepository.save(user);
+        // users JPA entity to UserDto
+    UserDto savedUserDto=UserMapper.mapToUserdto(user);
+    return savedUserDto;
     }
 
-    public users getUserById(Long id) {
+    public UserDto getUserById(Long id) {
         Optional<users> user = userRepository.findById(id);
-        return user.orElse(null);
+        users users= user.orElse(null);
+        return UserMapper.mapToUserdto(users);
 
     }
 
-    public List<users> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         List<users> users = userRepository.findAll();
-        return users;
+        return users.stream().map(UserMapper::mapToUserdto).collect(Collectors.toList());
     }
 
 
-    public users updateUser( users user) {
+    public UserDto updateUser( UserDto user) {
         users existingUser = userRepository.findById(user.getId()).get();
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
         existingUser.setEmail(user.getEmail());
         users updateduser =userRepository.save(existingUser);
-        return updateduser;
+        return UserMapper.mapToUserdto(updateduser);
     }
 
     public void deleteUser(Long id) {
