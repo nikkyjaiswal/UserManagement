@@ -6,6 +6,7 @@ import javaguides.Repository.userRepository;
 import javaguides.UserDto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,28 +17,32 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class userServiceImpl {
     private userRepository userRepository;
+    private ModelMapper modelmapper;
 
 
     public UserDto createUser(UserDto userDto) {
        // UserDto to user JPA entity
-            users user= UserMapper.mapTousers(userDto);
-
+            //users user= UserMapper.mapTousers(userDto);
+        users user= modelmapper.map(userDto,users.class);
         users savedUser = userRepository.save(user);
         // users JPA entity to UserDto
-    UserDto savedUserDto=UserMapper.mapToUserdto(user);
+   // UserDto savedUserDto=UserMapper.mapToUserdto(user);
+        UserDto savedUserDto=modelmapper.map(savedUser,UserDto.class);
     return savedUserDto;
     }
 
     public UserDto getUserById(Long id) {
         Optional<users> user = userRepository.findById(id);
         users users= user.orElse(null);
-        return UserMapper.mapToUserdto(users);
+        //return UserMapper.mapToUserdto(users);
+        return modelmapper.map(users,UserDto.class);
 
     }
 
     public List<UserDto> getAllUsers() {
         List<users> users = userRepository.findAll();
-        return users.stream().map(UserMapper::mapToUserdto).collect(Collectors.toList());
+        //return users.stream().map(UserMapper::mapToUserdto).collect(Collectors.toList());
+        return users.stream().map(users1 ->modelmapper.map(users1,UserDto.class)).collect(Collectors.toList());
     }
 
 
@@ -47,7 +52,7 @@ public class userServiceImpl {
         existingUser.setLastName(user.getLastName());
         existingUser.setEmail(user.getEmail());
         users updateduser =userRepository.save(existingUser);
-        return UserMapper.mapToUserdto(updateduser);
+        return modelmapper.map(updateduser,UserDto.class);
     }
 
     public void deleteUser(Long id) {
