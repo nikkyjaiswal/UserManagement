@@ -11,9 +11,10 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail()
-                );
+        );
         return userdto;
     }
+
     public static users mapTousers(UserDto userdto) {
         users user = new users(
                 userdto.getId(),

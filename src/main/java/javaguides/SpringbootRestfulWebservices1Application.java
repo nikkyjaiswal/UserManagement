@@ -7,12 +7,13 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class SpringbootRestfulWebservices1Application {
-	@Bean
-	public ModelMapper modelMapper()
-	{return new ModelMapper();}
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringbootRestfulWebservices1Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringbootRestfulWebservices1Application.class, args);
+    }
 
 }
