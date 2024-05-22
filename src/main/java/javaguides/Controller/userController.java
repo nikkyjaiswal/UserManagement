@@ -1,5 +1,6 @@
 package javaguides.Controller;
 
+import jakarta.validation.Valid;
 import javaguides.Entity.users;
 import javaguides.Exception.ErrorDetails;
 import javaguides.Exception.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import javaguides.UserDto.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -21,7 +23,7 @@ public class userController {
     private userServiceImpl service;
 
     @PostMapping()
-    public ResponseEntity<UserDto> createUsers(@RequestBody UserDto user) {
+    public ResponseEntity<UserDto> createUsers(@RequestBody @Valid UserDto user) {
         UserDto usaveuser = service.createUser(user);
         return new ResponseEntity<>(usaveuser, HttpStatus.CREATED);
     }
@@ -39,7 +41,7 @@ public class userController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable int id, @RequestBody UserDto user) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable int id, @RequestBody @Valid UserDto user) {
         UserDto newUser = service.updateUser(user);
         // users users = service.getUserById((long) id);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
